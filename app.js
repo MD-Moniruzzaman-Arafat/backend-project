@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const express = require('express');
+const morgan = require('morgan');
 const app = express();
 const port = 3000;
 
@@ -12,6 +13,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// 3rd party middleware morgan
+app.use(morgan('dev'));
+
 async function readMyFile() {
   try {
     const data = await fs.readFile(`${__dirname}/data/data.json`, 'utf8');
@@ -21,8 +25,8 @@ async function readMyFile() {
   }
 }
 app.get('/api/v1/tours', async (req, res) => {
-  const time = req.requestTime;
-  console.log(time);
+  //   const time = req.requestTime;
+  //   console.log(time);
   const result = await readMyFile();
   res.status(200).json({
     status: 'success',
