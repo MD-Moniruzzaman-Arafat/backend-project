@@ -6,6 +6,12 @@ const port = 3000;
 // middleware
 app.use(express.json());
 
+// custom middleware
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
+
 async function readMyFile() {
   try {
     const data = await fs.readFile(`${__dirname}/data/data.json`, 'utf8');
@@ -15,9 +21,12 @@ async function readMyFile() {
   }
 }
 app.get('/api/v1/tours', async (req, res) => {
+  const time = req.requestTime;
+  console.log(time);
   const result = await readMyFile();
   res.status(200).json({
     status: 'success',
+    requestAt: req.requestTime,
     results: JSON.parse(result).length,
     data: {
       tours: JSON.parse(result),
