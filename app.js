@@ -24,9 +24,9 @@ async function readMyFile() {
     console.log(error.message);
   }
 }
-app.get('/api/v1/tours', async (req, res) => {
-  //   const time = req.requestTime;
-  //   console.log(time);
+
+// tours function
+const getAllTours = async (req, res) => {
   const result = await readMyFile();
   res.status(200).json({
     status: 'success',
@@ -36,13 +36,85 @@ app.get('/api/v1/tours', async (req, res) => {
       tours: JSON.parse(result),
     },
   });
-});
+};
 
-app.post('/api/v1/tours', async (req, res) => {
-  const body = req.body;
-  console.log(body);
-  res.send('Done');
-});
+const getTours = async (req, res) => {
+  res.status(500).json({
+    status: ' error',
+    message: ' this route is not define',
+  });
+};
+
+const updateTours = async (req, res) => {
+  res.status(500).json({
+    status: ' error',
+    message: ' this route is not define',
+  });
+};
+
+const deleteTours = async (req, res) => {
+  res.status(500).json({
+    status: ' error',
+    message: ' this route is not define',
+  });
+};
+
+const createTours = async (req, res) => {
+  res.status(500).json({
+    status: ' error',
+    message: ' this route is not define',
+  });
+};
+
+// users function
+const getAllUsers = async (req, res) => {
+  res.status(500).json({
+    status: ' error',
+    message: ' this route is not define',
+  });
+};
+
+const getUsers = async (req, res) => {
+  res.status(500).json({
+    status: ' error',
+    message: ' this route is not define',
+  });
+};
+
+const updateUsers = async (req, res) => {
+  res.status(500).json({
+    status: ' error',
+    message: ' this route is not define',
+  });
+};
+
+const deleteUsers = async (req, res) => {
+  res.status(500).json({
+    status: ' error',
+    message: ' this route is not define',
+  });
+};
+
+const createUsers = async (req, res) => {
+  res.status(500).json({
+    status: ' error',
+    message: ' this route is not define',
+  });
+};
+
+app.route('/api/v1/tours').get(getAllTours).post(createTours);
+app
+  .route('/api/v1/tours/:id')
+  .get(getTours)
+  .patch(updateTours)
+  .delete(deleteTours);
+
+app.route('/api/v1/users').get(getAllUsers).post(createUsers);
+app
+  .route('/api/v1/users/:id')
+  .get(getUsers)
+  .patch(updateUsers)
+  .delete(deleteUsers);
 
 app.get('/', (req, res) => {
   res.status(200).json({ status: 'success', message: 'Hi This Is My Project' });
