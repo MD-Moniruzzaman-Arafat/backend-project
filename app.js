@@ -102,19 +102,17 @@ const createUsers = async (req, res) => {
   });
 };
 
-app.route('/api/v1/tours').get(getAllTours).post(createTours);
-app
-  .route('/api/v1/tours/:id')
-  .get(getTours)
-  .patch(updateTours)
-  .delete(deleteTours);
+const toursRouter = express.Router();
+const usersRouter = express.Router();
 
-app.route('/api/v1/users').get(getAllUsers).post(createUsers);
-app
-  .route('/api/v1/users/:id')
-  .get(getUsers)
-  .patch(updateUsers)
-  .delete(deleteUsers);
+toursRouter.route('/').get(getAllTours).post(createTours);
+toursRouter.route('/:id').get(getTours).patch(updateTours).delete(deleteTours);
+
+usersRouter.route('/').get(getAllUsers).post(createUsers);
+usersRouter.route('/:id').get(getUsers).patch(updateUsers).delete(deleteUsers);
+
+app.use('/api/v1/tours', toursRouter);
+app.use('/api/v1/users', usersRouter);
 
 app.get('/', (req, res) => {
   res.status(200).json({ status: 'success', message: 'Hi This Is My Project' });
