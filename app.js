@@ -3,6 +3,9 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+// middleware
+app.use(express.json());
+
 async function readMyFile() {
   try {
     const data = await fs.readFile(`${__dirname}/data/data.json`, 'utf8');
@@ -20,6 +23,12 @@ app.get('/api/v1/tours', async (req, res) => {
       tours: JSON.parse(result),
     },
   });
+});
+
+app.post('/api/v1/tours', async (req, res) => {
+  const body = req.body;
+  console.log(body);
+  res.send('Done');
 });
 
 app.get('/', (req, res) => {
