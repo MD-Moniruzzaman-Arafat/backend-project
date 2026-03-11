@@ -24,22 +24,41 @@ const Tour = require('../model/tourModel');
 
 // tours function
 exports.getAllTours = async (req, res) => {
-  const result = await readMyFile();
-  res.status(200).json({
-    status: 'success',
-    requestAt: req.requestTime,
-    results: JSON.parse(result).length,
-    data: {
-      tours: JSON.parse(result),
-    },
-  });
+  try {
+    const tours = await Tour.find();
+    res.status(200).json({
+      status: 'success',
+      results: tours.length,
+      requestAt: req.requestTime,
+      data: {
+        tours,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: error.message,
+    });
+  }
 };
 
 exports.getTours = async (req, res) => {
-  res.status(500).json({
-    status: ' error',
-    message: ' this route is not define',
-  });
+  try {
+    const tours = await Tour.findById(req.params.id);
+    res.status(200).json({
+      status: 'success',
+      results: tours.length,
+      requestAt: req.requestTime,
+      data: {
+        tours,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: error.message,
+    });
+  }
 };
 
 exports.updateTours = async (req, res) => {
