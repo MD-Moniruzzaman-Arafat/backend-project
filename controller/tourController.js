@@ -64,7 +64,7 @@ exports.getTours = async (req, res) => {
 exports.updateTours = async (req, res) => {
   try {
     const tours = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
+      returnDocument: 'after',
       runValidators: true,
     });
     res.status(200).json({
