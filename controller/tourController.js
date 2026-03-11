@@ -9,6 +9,12 @@ async function readMyFile() {
   }
 }
 
+// middleware function
+exports.idCheck = async (req, res, next, val) => {
+  console.log(`param id is ${val}`);
+  next();
+};
+
 // tours function
 exports.getAllTours = async (req, res) => {
   const result = await readMyFile();
