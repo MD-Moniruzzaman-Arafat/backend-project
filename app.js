@@ -15,7 +15,9 @@ app.use((req, res, next) => {
 });
 
 // 3rd party middleware morgan
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', usersRouter);
