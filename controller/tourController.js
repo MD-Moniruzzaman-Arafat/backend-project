@@ -15,6 +15,11 @@ exports.idCheck = async (req, res, next, val) => {
   next();
 };
 
+exports.checkBody = async (req, res, next) => {
+  console.log(`if check name and email is valid`);
+  next();
+};
+
 // tours function
 exports.getAllTours = async (req, res) => {
   const result = await readMyFile();
