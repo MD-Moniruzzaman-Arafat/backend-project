@@ -1,24 +1,26 @@
-const fs = require('fs').promises;
+// const fs = require('fs').promises;
 
-async function readMyFile() {
-  try {
-    const data = await fs.readFile(`${__dirname}/../data/data.json`, 'utf8');
-    return data;
-  } catch (error) {
-    console.log(error.message);
-  }
-}
+const Tour = require('../model/tourModel');
+
+// async function readMyFile() {
+//   try {
+//     const data = await fs.readFile(`${__dirname}/../data/data.json`, 'utf8');
+//     return data;
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// }
 
 // middleware function
-exports.idCheck = async (req, res, next, val) => {
-  console.log(`param id is ${val}`);
-  next();
-};
+// exports.idCheck = async (req, res, next, val) => {
+//   console.log(`param id is ${val}`);
+//   next();
+// };
 
-exports.checkBody = async (req, res, next) => {
-  console.log(`if check name and email is valid`);
-  next();
-};
+// exports.checkBody = async (req, res, next) => {
+//   console.log(`if check name and email is valid`);
+//   next();
+// };
 
 // tours function
 exports.getAllTours = async (req, res) => {
@@ -55,8 +57,18 @@ exports.deleteTours = async (req, res) => {
 };
 
 exports.createTours = async (req, res) => {
-  res.status(500).json({
-    status: ' error',
-    message: ' this route is not define',
-  });
+  try {
+    const tours = await Tour.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tours,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: ' fail',
+      message: error.message,
+    });
+  }
 };

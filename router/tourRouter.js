@@ -12,13 +12,9 @@ const {
 const toursRouter = express.Router();
 
 // param middleware
-toursRouter.param('id', idCheck);
+// toursRouter.param('id', idCheck);
 
 toursRouter.route('/').get(getAllTours).post(createTours);
-toursRouter
-  .route('/:id')
-  .get(checkBody, getTours)
-  .patch(updateTours)
-  .delete(deleteTours);
+toursRouter.route('/:id').get(getTours).patch(updateTours).delete(deleteTours);
 
 module.exports = toursRouter;
