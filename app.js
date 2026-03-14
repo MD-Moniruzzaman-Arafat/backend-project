@@ -5,6 +5,11 @@ const usersRouter = require('./router/userRouter');
 const toursRouter = require('./router/tourRouter');
 const app = express();
 
+// config
+app.set('query parser', function (str) {
+  return require('qs').parse(str, { allowDots: true });
+});
+
 // middleware
 app.use(express.json());
 
