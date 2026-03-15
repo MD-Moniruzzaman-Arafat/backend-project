@@ -22,9 +22,23 @@ const Tour = require('../model/tourModel');
 //   next();
 // };
 
+console.log('controller loaded ✓');
+
+exports.aliasTopTours = (req, res, next) => {
+  console.log('before:', req.query); // ← add করো
+
+  req.query.limit = req.query.limit;
+  req.query.sort = req.query.sort;
+  req.query.fields = req.query.fields;
+
+  console.log('after:', req.query); // ← add করো
+  next();
+};
+
 // tours function
 exports.getAllTours = async (req, res) => {
   try {
+    // console.log(req.query);
     //BUILD QUERY
     // FILTERING
     const queryObj = { ...req.query };
