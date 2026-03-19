@@ -8,6 +8,7 @@ const {
   idCheck,
   checkBody,
   aliasTopTours,
+  getTourStats,
 } = require('../controller/tourController');
 
 const toursRouter = express.Router();
@@ -15,15 +16,8 @@ const toursRouter = express.Router();
 // param middleware
 // toursRouter.param('id', idCheck);
 
-toursRouter.get(
-  '/top-5-cheap',
-  (req, res, next) => {
-    console.log('top-5-cheap route hit ✓');
-    next();
-  },
-  aliasTopTours,
-  getAllTours
-);
+toursRouter.get('/top-5-cheap', aliasTopTours, getAllTours);
+toursRouter.get('/stats', getTourStats);
 
 toursRouter.route('/').get(getAllTours).post(createTours);
 toursRouter.route('/:id').get(getTours).patch(updateTours).delete(deleteTours);
