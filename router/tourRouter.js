@@ -9,6 +9,7 @@ const {
   checkBody,
   aliasTopTours,
   getTourStats,
+  getMonthlyPlan,
 } = require('../controller/tourController');
 
 const toursRouter = express.Router();
@@ -18,6 +19,7 @@ const toursRouter = express.Router();
 
 toursRouter.get('/top-5-cheap', aliasTopTours, getAllTours);
 toursRouter.get('/stats', getTourStats);
+toursRouter.get('/monthly-plan/:year', getMonthlyPlan);
 
 toursRouter.route('/').get(getAllTours).post(createTours);
 toursRouter.route('/:id').get(getTours).patch(updateTours).delete(deleteTours);
