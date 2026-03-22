@@ -90,6 +90,12 @@ tourSchema.post(/^find/, function (docs) {
   console.log(`Query took ${Date.now() - this.start} ms`);
 });
 
+// aggregation middleware
+tourSchema.pre('aggregate', function () {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  // this = aggregation object
+});
+
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
