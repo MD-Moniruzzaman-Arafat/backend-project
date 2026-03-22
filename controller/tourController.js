@@ -1,5 +1,6 @@
 const Tour = require('../model/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 console.log('controller loaded ✓');
@@ -39,6 +40,11 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 
 exports.getTours = catchAsync(async (req, res, next) => {
   const tours = await Tour.findById(req.params.id);
+
+  if (!tours) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
+
   res.status(200).json({
     status: 'success',
     requestAt: req.requestTime,
@@ -53,6 +59,11 @@ exports.updateTours = catchAsync(async (req, res, next) => {
     returnDocument: 'after',
     runValidators: true,
   });
+
+  if (!tours) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
+
   res.status(200).json({
     status: 'success',
     results: tours.length,
@@ -64,7 +75,12 @@ exports.updateTours = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteTours = catchAsync(async (req, res, next) => {
-  await Tour.findByIdAndDelete(req.params.id);
+  const tours = await Tour.findByIdAndDelete(req.params.id);
+
+  if (!tours) {
+    return next(new AppError('No tour found with that ID', 404));
+  }
+
   res.status(204).json({
     status: 'success',
     requestAt: req.requestTime,
