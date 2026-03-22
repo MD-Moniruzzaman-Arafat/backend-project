@@ -31,4 +31,10 @@ app.get('/', (req, res) => {
   res.status(200).json({ status: 'success', message: 'Hi This Is My Project' });
 });
 
+app.all('*splat', (req, res) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `Can't find ${req.originalUrl} on this server`,
+  });
+});
 module.exports = app;
