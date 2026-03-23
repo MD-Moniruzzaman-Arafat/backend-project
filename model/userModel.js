@@ -1,5 +1,6 @@
 const { default: mongoose } = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -58,6 +59,19 @@ const userSchema = new mongoose.Schema({
     default: true,
     select: false, // ← response এ আসবে না
   },
+});
+
+// document middleware
+// save হওয়ার আগে password hash করো
+userSchema.pre('save', async function () {
+  // password change না হলে skip
+  if (!this.isModified('password')) return next();
+
+  // password hash করো — 12 = cost factor
+  this.password = await bcrypt.hash(this.password, 12);
+
+  // passwordConfirm database এ save করবো না
+  this.passwordConfirm = undefined;
 });
 
 const User = mongoose.model('User', userSchema);
