@@ -1,3 +1,5 @@
+const AppError = require('../utils/appError');
+
 // ─── Development ───────────────────────────────────────
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -27,6 +29,15 @@ const sendErrorProd = (err, res) => {
   }
 };
 
+const handleCastErrorDB = (err) => {
+  const message = `Invalid ${err.path}: ${err.value}`;
+  // err.path  = '_id'
+  // err.value = 'wrongid'
+  // message   = 'Invalid _id: wrongid'
+
+  return new AppError(message, 400);
+};
+
 exports.globalErrorHandler = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
@@ -34,6 +45,11 @@ exports.globalErrorHandler = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    sendErrorProd(err, res);
+    let error = { ...err, message: err.message };
+
+    // CastError check করো
+    if (err.name === 'CastError') error = handleCastErrorDB(error);
+
+    sendErrorProd(error, res);
   }
 };
