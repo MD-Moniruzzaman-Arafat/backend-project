@@ -1,3 +1,9 @@
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION! Shutting down...');
+  console.error(err.name, err.message);
+  process.exit(1);
+});
+
 require('dotenv').config();
 const app = require('./app');
 const mongoose = require('mongoose');
