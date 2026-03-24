@@ -1,6 +1,8 @@
 const User = require('../model/userModel');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 const signToken = (id) => {
   return jwt.sign(
@@ -26,5 +28,40 @@ exports.signUp = catchAsync(async (req, res, next) => {
     data: {
       newUser,
     },
+  });
+});
+
+exports.login = catchAsync(async (req, res, next) => {
+  // Step 1: email আর password আছে কিনা
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return next(new AppError('Please provide email and password', 400));
+  }
+
+  // Step 2: user আছে কিনা — password সহ আনো
+  const user = await User.findOne({ email }).select('+password');
+  console.log(user);
+
+  if (!user) {
+    return next(new AppError('Incorrect email or password', 401));
+  }
+
+  // Step 3: password correct কিনা
+  const isCorrect = user.correctPassword(password, user.password);
+
+  if (!isCorrect) {
+    return next(new AppError('Incorrect email or password', 401));
+  }
+
+  // Step 4: token বানাও আর পাঠাও
+  const token = signToken(user._id);
+
+  // password response এ আসবে না
+  //   user.password = undefined;
+
+  res.status(200).json({
+    status: 'success',
+    token,
   });
 });
