@@ -65,7 +65,9 @@ const userSchema = new mongoose.Schema({
 // save হওয়ার আগে password hash করো
 userSchema.pre('save', async function () {
   // password change না হলে skip
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) return;
+
+  this.passwordChangedAt = Date.now() - 1000; // ← automatically set হবে
 
   // password hash করো — 12 = cost factor
   this.password = await bcrypt.hash(this.password, 12);
@@ -79,6 +81,25 @@ userSchema.methods.correctPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  // JWTTimestamp = decoded.iat = token বানানোর time
+
+  if (this.passwordChangedAt) {
+    // passwordChangedAt কে Unix timestamp এ convert করো
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    console.log(JWTTimestamp, changedTimestamp);
+    // token বানানোর time < password change time
+    // মানে password পরে change হয়েছে
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  // passwordChangedAt নেই — password কখনো change হয়নি
+  return false;
 };
 
 const User = mongoose.model('User', userSchema);

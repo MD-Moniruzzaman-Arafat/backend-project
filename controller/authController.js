@@ -3,6 +3,7 @@ const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { promisify } = require('util');
 
 const signToken = (id) => {
   return jwt.sign(
@@ -64,4 +65,43 @@ exports.login = catchAsync(async (req, res, next) => {
     status: 'success',
     token,
   });
+});
+
+exports.protect = catchAsync(async (req, res, next) => {
+  // Step 1: Token আছে কিনা check করো
+  let token;
+  if (req.headers.authorization?.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+    // 'Bearer eyJhbGc...' → 'eyJhbGc...'
+  }
+
+  if (!token) {
+    return next(
+      new AppError('You are not logged in. Please log in to get access', 401)
+    );
+  }
+
+  //   // Step 2: Token verify করো
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  //   // decoded = { id: '65f1a2b3...', iat: 1709728000, exp: 1712320000 }
+  console.log(decoded);
+
+  //   // Step 3: User এখনো আছে কিনা
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+    return next(
+      new AppError('The user belonging to this token no longer exists', 401)
+    );
+  }
+
+  //   // Step 4: Password change হয়েছে কিনা
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new AppError('User recently changed password. Please log in again', 401)
+    );
+  }
+
+  //   // Step 5: req.user এ save করো
+  req.user = currentUser;
+  next();
 });
