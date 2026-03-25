@@ -19,6 +19,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    role: req.body.role,
   });
 
   const token = signToken(newUser._id);
@@ -84,7 +85,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   //   // Step 2: Token verify করো
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   //   // decoded = { id: '65f1a2b3...', iat: 1709728000, exp: 1712320000 }
-  console.log(decoded);
+  //   console.log(decoded);
 
   //   // Step 3: User এখনো আছে কিনা
   const currentUser = await User.findById(decoded.id);
@@ -105,3 +106,18 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+// authController.js
+exports.restrictTo = (...roles) => {
+  // roles = ['admin', 'lead-guide']
+
+  return (req, res, next) => {
+    // req.user.role = protect middleware এ set হয়েছে
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError('You do not have permission to perform this action', 403)
+      );
+    }
+    next();
+  };
+};

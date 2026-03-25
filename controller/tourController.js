@@ -26,7 +26,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 
   // EXECUTE QUERY
   const tours = await features.query;
-
+  console.log(req.user);
   // SEND QUERY
   res.status(200).json({
     status: 'success',
