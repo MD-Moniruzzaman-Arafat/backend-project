@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 const usersRouter = require('./router/userRouter');
 const toursRouter = require('./router/tourRouter');
 const AppError = require('./utils/appError');
@@ -25,6 +26,16 @@ app.use((req, res, next) => {
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+const limiter = rateLimit({
+  max: 100, // ← same IP থেকে 100 টা request করতে পারবে এক ঘন্টায়
+  windowMs: 60 * 60 * 1000, // ← 1 ঘন্টা
+  message: 'Too many requests from this IP, please try again in an hour!',
+});
+
+app.use('/api', limiter); // ← /api দিয়ে শুরু হওয়া route গুলোর জন্য rate limit apply হবে
+
+// routes
 
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', usersRouter);
