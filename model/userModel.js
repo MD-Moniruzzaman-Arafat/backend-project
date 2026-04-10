@@ -91,6 +91,10 @@ userSchema.methods.correctPassword = async function (
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+userSchema.pre(/^find/, function () {
+  this.find({ active: { $ne: false } });
+});
+
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   // JWTTimestamp = decoded.iat = token বানানোর time
 
