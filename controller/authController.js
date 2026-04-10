@@ -17,6 +17,17 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+
+  user.password = undefined; // ← password response এ আসবে না
+
+  res.cookie('jwt', token, {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true, // ← cookie টা browser এ JavaScript দিয়ে access করা যাবে না
+    secure: process.env.NODE_ENV === 'production', // ← production এ cookie টা শুধু HTTPS এ পাঠানো হবে
+  });
+
   res.status(statusCode).json({
     status: 'success',
     token,
