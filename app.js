@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const express = require('express');
 const morgan = require('morgan');
+const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const usersRouter = require('./router/userRouter');
 const toursRouter = require('./router/tourRouter');
@@ -14,7 +15,8 @@ app.set('query parser', function (str) {
 });
 
 // middleware
-app.use(express.json());
+app.use(helmet()); // ← set security HTTP headers
+app.use(express.json({ limit: '10kb' })); // ← body থেকে 10kb এর বেশি data আসলে block করে দিবে
 
 // custom middleware
 app.use((req, res, next) => {
