@@ -77,12 +77,11 @@ userSchema.pre('save', async function () {
   this.passwordConfirm = undefined;
 });
 
-userSchema.pre('save', function (next) {
+userSchema.pre('save', function () {
   if (!this.isModified('password') || this.isNew) {
-    return next();
+    return;
   }
   this.passwordChangedAt = Date.now() - 1000;
-  next();
 });
 
 userSchema.methods.correctPassword = async function (
