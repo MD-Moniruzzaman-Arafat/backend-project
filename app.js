@@ -20,8 +20,8 @@ app.set('query parser', function (str) {
 // middleware
 app.use(helmet()); // ← set security HTTP headers
 app.use(express.json({ limit: '10kb' })); // ← body থেকে 10kb এর বেশি data আসলে block করে দিবে
-app.use(mongoSanitize()); // ← NoSQL query injection থেকে data sanitize করে
-app.use(xss()); // ← XSS attack থেকে data sanitize করে
+// app.use(mongoSanitize()); // ← NoSQL query injection থেকে data sanitize করে
+// app.use(xss()); // ← XSS attack থেকে data sanitize করে
 app.use(
   hpp({
     whitelist: [
